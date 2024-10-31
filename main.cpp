@@ -8,7 +8,7 @@ private:
     std::string nume;
     int timpPreparare;
     double pret;
-
+/// ana are mere
 public:
     Preparat(std::string nume, double pret, int timpPreparare)
         : nume(std::move(nume)), timpPreparare(timpPreparare), pret(pret) {}
