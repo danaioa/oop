@@ -15,8 +15,8 @@ class Preparate {
     double pret;
 
 public:
-    Preparate(int numarOrdine, string nume, int timpPreparare, double pret)
-        : numarOrdine(numarOrdine), nume(std::move(nume)), timpPreparare(timpPreparare), pret(pret) {}
+   Preparate(int numarOrdine, string nume, int timpPreparare, double pret)
+    : numarOrdine(numarOrdine), nume(std::move(nume)), timpPreparare(timpPreparare), pret(pret) {}
 
     Preparate(const Preparate& p) {
         this->numarOrdine = p.numarOrdine;
@@ -24,18 +24,21 @@ public:
         this->timpPreparare = p.timpPreparare;
         this->pret = p.pret;
     }
-
     Preparate& operator=(const Preparate& p) {
         if (this != &p) {
-            this->numarOrdine = p.numarOrdine;
-            this->nume = p.nume;
-            this->timpPreparare = p.timpPreparare;
-            this->pret = p.pret;
+            numarOrdine = p.numarOrdine;
+            nume = p.nume;
+            timpPreparare = p.timpPreparare;
+            pret = p.pret;
         }
         return *this;
     }
 
     ~Preparate() = default;
+
+    [[nodiscard]] int getNumarOrdine() const { return numarOrdine; }
+    [[nodiscard]] string getNume() const { return nume; }
+    [[nodiscard]] double getPret() const { return pret; }
 
     friend ostream& operator<<(ostream& os, const Preparate& p);
 };
@@ -49,6 +52,7 @@ class Meniu {
 private:
     std::vector<Preparate> preparate;
     int nextOrderNumber = 1;
+
 public:
     void adaugarePreparat(const Preparate& p) {
         preparate.push_back(p);
@@ -57,6 +61,15 @@ public:
     void afisareMeniu() const {
         for (const auto& preparat : preparate)
             std::cout << preparat << std::endl;
+    }
+
+    [[nodiscard]] Preparate getPreparat(int numarOrdine) const {
+        for (const auto& preparat : preparate) {
+            if (preparat.getNumarOrdine() == numarOrdine) {
+                return preparat;
+            }
+        }
+        throw invalid_argument("Preparatul cu acest numar de ordine nu exista.");
     }
 
     void citireDinFisier(const string& numeFisier) {
@@ -107,21 +120,20 @@ class Client {
     int numarMasa;
 
 public:
-    Client() : optiune(LaPachet), numarMasa(-1) {}  // Default initialization
+    Client() : optiune(LaPachet), numarMasa(-1) {}
 
     Client(string Nume, string Numar, string Adresa, OptiuneServire optiune, int numarMasa = -1)
-        : Nume(std::move(Nume)), Numar(std::move(Numar)), Adresa(std::move(Adresa)), optiune(optiune), numarMasa(numarMasa) {
+    : Nume(std::move(Nume)), Numar(std::move(Numar)), Adresa(std::move(Adresa)), optiune(optiune), numarMasa(numarMasa) {
         if (optiune == InRestaurant && numarMasa == -1) {
             cout << "Avertizare: Nu a fost specificat un număr de masă pentru opțiunea 'In Restaurant'.\n";
         }
     }
 
+
     void informatii() {
         int optiuneInt;
         cout << "Doriti 0 pentru LaPachet sau 1 pentru InRestaurant: ";
         cin >> optiuneInt;
-        optiune = static_cast<OptiuneServire>(optiuneInt);
-
         switch (optiune) {
             case LaPachet: {
                 cout << "Numele: ";
@@ -142,6 +154,42 @@ public:
                 break;
             }
         }
+    }
+
+    [[nodiscard]] string getNume() const { return Nume; }
+    [[nodiscard]] string getNumar() const { return Numar; }
+    [[nodiscard]] string getAdresa() const { return Adresa; }
+    [[nodiscard]] int getNumarMasa() const { return numarMasa; }
+    [[nodiscard]] OptiuneServire getOptiune() const { return optiune; }
+};
+
+class BonFiscal {
+    Client client;
+    vector<Preparate> comenzi;
+    double total;
+
+public:
+    explicit BonFiscal(Client client) : client(std::move(client)), total(0) {}
+    void adaugaPreparat(Preparate preparat) {
+        comenzi.push_back(std::move(preparat));
+        total += preparat.getPret();
+    }
+
+
+    void afisareBon() const {
+        cout << "\n--- Bon Fiscal ---\n";
+        cout << "Client: " << client.getNume() << "\n";
+        if (client.getOptiune() == LaPachet) {
+            cout << "Numar: " << client.getNumar() << "\n";
+            cout << "Adresa: " << client.getAdresa() << "\n";
+        } else {
+            cout << "Numar masa: " << client.getNumarMasa() << "\n";
+        }
+        cout << "\nComenzi:\n";
+        for (const auto& preparat : comenzi) {
+            cout << preparat << "\n";
+        }
+        cout << "\nTotal de plata: " << total << " RON\n";
     }
 };
 
@@ -202,24 +250,38 @@ void AfisareMesaj() {
                 Meniu meniu;
                 meniu.citireDinFisier("meniu.txt");
                 meniu.afisareMeniu();
+
                 Client client;
                 client.informatii();
 
+                BonFiscal bon(client);
+
+                cout << "Selectati numerele de ordine ale preparatelor dorite (0 pentru a finaliza):\n";
+                int numarOrdine;
+                while (true) {
+                    cout << "Numar ordine: ";
+                    cin >> numarOrdine;
+                    if (numarOrdine == 0) break;
+                    try {
+                        Preparate preparat = meniu.getPreparat(numarOrdine);
+                        bon.adaugaPreparat(preparat);
+                    } catch (const std::exception& e) {
+                        cout << e.what() << endl;
+                    }
+                }
+                bon.afisareBon();
                 break;
             }
             case '2':
-                cout << "Ai ales Barul OCHE!\n";
-                break;
             case '3':
-                cout << "Ai ales Darts!\n";
+                cout << "Optiune indisponibila!\n";
                 break;
             default:
                 cout << "Optiune invalida!\n";
+                break;
         }
-
     } else {
-        system("CLS");
-        cout << "A fost o placere sa te avem ca vizitator! La revedere!\n";
+        cout << "Multumim pentru vizita!\n";
     }
 }
 
