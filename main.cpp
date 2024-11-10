@@ -1,117 +1,229 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <windows.h>
+#include <random>
 
-class Preparat
-{
-private:
-    std::string nume;
+using namespace std;
+
+class Preparate {
+    int numarOrdine;
+    string nume;
     int timpPreparare;
     double pret;
-/// ana are mere
+
 public:
-    Preparat(std::string nume, double pret, int timpPreparare)
-        : nume(std::move(nume)), timpPreparare(timpPreparare), pret(pret) {}
+    Preparate(int numarOrdine, string nume, int timpPreparare, double pret)
+        : numarOrdine(numarOrdine), nume(std::move(nume)), timpPreparare(timpPreparare), pret(pret) {}
 
-    Preparat(const Preparat& other) = default;
+    Preparate(const Preparate& p) {
+        this->numarOrdine = p.numarOrdine;
+        this->nume = p.nume;
+        this->timpPreparare = p.timpPreparare;
+        this->pret = p.pret;
+    }
 
-    Preparat& operator=(const Preparat& other)
-    {
-        if (this != &other)
-        {
-            nume = other.nume;
-            timpPreparare = other.timpPreparare;
-            pret = other.pret;
+    Preparate& operator=(const Preparate& p) {
+        if (this != &p) {
+            this->numarOrdine = p.numarOrdine;
+            this->nume = p.nume;
+            this->timpPreparare = p.timpPreparare;
+            this->pret = p.pret;
         }
         return *this;
     }
 
-    ~Preparat() = default;
+    ~Preparate() = default;
 
-    friend std::ostream& operator<<(std::ostream& COUT, const Preparat& p);
+    friend ostream& operator<<(ostream& os, const Preparate& p);
 };
 
-std::ostream& operator<<(std::ostream& COUT, const Preparat& p)
-{
-    COUT << "NUME: " << p.nume << ", PRET: " << p.pret << ", TIMP PREPARARE: " << p.timpPreparare << " minute.";
-    return COUT;
+ostream& operator<<(ostream& os, const Preparate& p) {
+    os << "Order #" << p.numarOrdine << ": " << p.nume << " " << p.timpPreparare << " min " << p.pret << " RON";
+    return os;
 }
 
-class Meniu
-{
+class Meniu {
 private:
-    std::vector<Preparat> preparate;
-
+    std::vector<Preparate> preparate;
+    int nextOrderNumber = 1;
 public:
-    void adaugarePreparat(const Preparat& p);
-    void afisareMeniu() const;
-};
-
-void Meniu::adaugarePreparat(const Preparat& p)
-{
-    preparate.push_back(p);
-}
-
-void Meniu::afisareMeniu() const
-{
-    for (const auto& preparat : preparate)
-        std::cout << preparat << std::endl;
-}
-
-class Client
-{
-private:
-    int NrMasa;
-
-public:
-    explicit Client(int nrmasa) : NrMasa(nrmasa) {}
-
-    void afisareDetalii() const
-    {
-        std::cout << "NrMasa: " << NrMasa << std::endl;
-    }
-};
-
-class Comanda
-{
-private:
-    Client client;
-    std::vector<Preparat> preparateComandate;
-
-public:
-    explicit Comanda(const Client& client) : client(client) {}
-
-    void adaugaPreparat(const Preparat& preparat)
-    {
-        preparateComandate.push_back(preparat);
+    void adaugarePreparat(const Preparate& p) {
+        preparate.push_back(p);
     }
 
-    void afisareComanda() const
-    {
-        client.afisareDetalii();
-        std::cout << "Preparatele comandate:" << std::endl;
-        for (const auto& preparat : preparateComandate)
+    void afisareMeniu() const {
+        for (const auto& preparat : preparate)
             std::cout << preparat << std::endl;
     }
+
+    void citireDinFisier(const string& numeFisier) {
+        ifstream file(numeFisier);
+        if (file.is_open()) {
+            string line;
+            while (getline(file, line)) {
+                stringstream ss(line);
+                string nume;
+
+                vector<string> words;
+                while (ss >> nume) {
+                    words.push_back(nume);
+                }
+
+                if (words.size() >= 3) {
+                    double pret = stod(words.back());
+                    words.pop_back();
+                    int timpPreparare = stoi(words.back());
+                    words.pop_back();
+
+                    nume = "";
+                    for (const auto& word : words) {
+                        if (!nume.empty()) nume += " ";
+                        nume += word;
+                    }
+                    Preparate preparat(nextOrderNumber++, nume, timpPreparare, pret);
+                    adaugarePreparat(preparat);
+                } else {
+                    cout << "Linie incorecta: \"" << line << "\"" << endl;
+                }
+            }
+            file.close();
+        }
+    }
 };
 
-int main()
-{
-    Meniu meniu;
-    meniu.adaugarePreparat(Preparat("Pizza Margherita", 29.99, 15));
-    meniu.adaugarePreparat(Preparat("Salată Caesar", 19.99, 10));
-    meniu.adaugarePreparat(Preparat("Tiramisu", 15.99, 5));
+enum OptiuneServire {
+    LaPachet,
+    InRestaurant
+};
 
-    std::cout << "Meniul disponibil:" << std::endl;
-    meniu.afisareMeniu();
+class Client {
+    string Nume;
+    string Numar;
+    string Adresa;
+    OptiuneServire optiune;
+    int numarMasa;
 
-    Client client(5);
-    Comanda comanda(client);
-    comanda.adaugaPreparat(Preparat("Pizza Margherita", 29.99, 15));
-    comanda.adaugaPreparat(Preparat("Tiramisu", 15.99, 5));
+public:
+    Client() : optiune(LaPachet), numarMasa(-1) {}  // Default initialization
 
-    std::cout << std::endl << "Detalii comanda:" << std::endl;
-    comanda.afisareComanda();
+    Client(string Nume, string Numar, string Adresa, OptiuneServire optiune, int numarMasa = -1)
+        : Nume(std::move(Nume)), Numar(std::move(Numar)), Adresa(std::move(Adresa)), optiune(optiune), numarMasa(numarMasa) {
+        if (optiune == InRestaurant && numarMasa == -1) {
+            cout << "Avertizare: Nu a fost specificat un număr de masă pentru opțiunea 'In Restaurant'.\n";
+        }
+    }
 
+    void informatii() {
+        int optiuneInt;
+        cout << "Doriti 0 pentru LaPachet sau 1 pentru InRestaurant: ";
+        cin >> optiuneInt;
+        optiune = static_cast<OptiuneServire>(optiuneInt);
+
+        switch (optiune) {
+            case LaPachet: {
+                cout << "Numele: ";
+                cin >> Nume;
+                cout << "Numar: ";
+                cin >> Numar;
+                cout << "Adresa: ";
+                cin >> Adresa;
+                break;
+            }
+            case InRestaurant: {
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                std::uniform_int_distribution<> distrib(1, 10);
+                numarMasa = distrib(gen);
+
+                cout << "Numarul mesei este: " << numarMasa << endl;
+                break;
+            }
+        }
+    }
+};
+
+static void Culoare(int c) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, c);
+}
+
+void desenareBraz(int inaltime) {
+    Culoare(10);
+    for (int i = 1; i <= inaltime; i++) {
+        for (int j = 1; j <= inaltime - i; j++) {
+            cout << " ";
+        }
+        for (int j = 1; j <= (2 * i - 1); j++) {
+            cout << "*";
+        }
+        cout << endl;
+    }
+    for (int i = 1; i <= 1; i++) {
+        for (int j = 1; j <= inaltime - 1; j++) {
+            cout << " ";
+        }
+        cout << "|" << endl << endl;
+    }
+}
+
+void AfisareMesaj() {
+    Culoare(9);
+
+    string text = "                 BINE ATI VENIT LA OCHE!\n"
+                  "                 -----------------------\n\n"
+                  "->Locatie: Predeal\n"
+                  "->Restaurantul OCHE exceleaza prin savoarea, diversitatea si calitatea produselor gatite cu pasiune \n"
+                  "->Un loc perfect pentru relaxare alaturi de cei dragi, departe de agitatia urbana\n\n\n";
+
+    cout << text;
+    desenareBraz(5);
+    Culoare(9);
+    cout << "1 - daca vrei sa continui si sa vezi ofertele noastre, apasa tasta 1: ";
+
+    char optiune;
+    cin >> optiune;
+
+    if (optiune == '1') {
+        system("CLS");
+        cout << "Meniu:\n";
+        cout << "1 - Meniu Restaurant\n";
+        cout << "2 - Meniu Bar\n";
+        cout << "3 - Darts\n";
+        cout << "Alege optiunea dorita (1/2/3): ";
+
+        char alegere;
+        cin >> alegere;
+
+        switch (alegere) {
+            case '1': {
+                Meniu meniu;
+                meniu.citireDinFisier("meniu.txt");
+                meniu.afisareMeniu();
+                Client client;
+                client.informatii();
+
+                break;
+            }
+            case '2':
+                cout << "Ai ales Barul OCHE!\n";
+                break;
+            case '3':
+                cout << "Ai ales Darts!\n";
+                break;
+            default:
+                cout << "Optiune invalida!\n";
+        }
+
+    } else {
+        system("CLS");
+        cout << "A fost o placere sa te avem ca vizitator! La revedere!\n";
+    }
+}
+
+int main() {
+    AfisareMesaj();
     return 0;
 }
