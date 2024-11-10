@@ -3,7 +3,9 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <random>
 
 using namespace std;
@@ -74,6 +76,11 @@ public:
 
     void citireDinFisier(const string& numeFisier) {
         ifstream file(numeFisier);
+        if (!file.is_open()) {
+            cout << "Eroare: Fișierul 'meniu.txt' nu poate fi deschis!" << endl;
+            return;
+        }
+        else
         if (file.is_open()) {
             string line;
             while (getline(file, line)) {
@@ -195,8 +202,10 @@ public:
 };
 
 static void Culoare(int c) {
+#ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, c);
+#endif
 }
 
 void desenareBraz(int inaltime) {
