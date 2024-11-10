@@ -134,6 +134,7 @@ public:
         int optiuneInt;
         cout << "Doriti 0 pentru LaPachet sau 1 pentru InRestaurant: ";
         cin >> optiuneInt;
+      /// optiune = static_cast<OptiuneServire>(optiuneInt);
         switch (optiune) {
             case LaPachet: {
                 cout << "Numele: ";
