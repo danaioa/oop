@@ -77,11 +77,6 @@ public:
 
     void citireDinFisier(const string& numeFisier) {
         ifstream file(numeFisier);
-        if (!file.is_open()) {
-            cout<< "Eroare: Fișierul '" << numeFisier << "' nu poate fi deschis!" << endl;
-            return;
-        }
-
         string line;
         while (getline(file, line)) {
             stringstream ss(line);
@@ -202,15 +197,15 @@ public:
         cout << "\nTotal de plata: " << total << " RON\n";
     }
 };
-static void Culoare(int c) {
+static void Culoare() {
 #ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, c);
+    SetConsoleTextAttribute(hConsole, 10);
 #endif
 }
 
 void desenareBraz(int inaltime) {
-    Culoare(10);
+    Culoare();
     for (int i = 1; i <= inaltime; i++) {
         for (int j = 1; j <= inaltime - i; j++) {
             cout << " ";
@@ -229,7 +224,7 @@ void desenareBraz(int inaltime) {
 }
 
 void AfisareMesaj() {
-    Culoare(9);
+    Culoare();
 
     string text = "                 BINE ATI VENIT LA OCHE!\n"
                   "                 -----------------------\n\n"
@@ -239,7 +234,7 @@ void AfisareMesaj() {
 
     cout << text;
     desenareBraz(5);
-    Culoare(9);
+    Culoare();
     cout << "1 - daca vrei sa continui si sa vezi ofertele noastre, apasa tasta 1: ";
 
     char optiune;
