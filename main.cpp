@@ -8,6 +8,7 @@
 #endif
 #include <random>
 #include <stdexcept>
+#include <rlutil.h>
 
 using namespace std;
 
@@ -201,15 +202,9 @@ public:
     }
 };
 
-static void Culoare(int c) {
-#ifdef _WIN32
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, c);
-#endif
-}
 
 void desenareBraz(int inaltime) {
-    Culoare(10);
+    rlutil::setColor(rlutil::BLUE);
     for (int i = 1; i <= inaltime; i++) {
         for (int j = 1; j <= inaltime - i; j++) {
             cout << " ";
@@ -228,7 +223,7 @@ void desenareBraz(int inaltime) {
 }
 
 void AfisareMesaj() {
-    Culoare(9);
+    rlutil::setColor(rlutil::BLUE);
 
     string text = "                 BINE ATI VENIT LA OCHE!\n"
             "                 -----------------------\n\n"
@@ -238,7 +233,7 @@ void AfisareMesaj() {
 
     cout << text;
     desenareBraz(5);
-    Culoare(9);
+    rlutil::setColor(rlutil::BLUE);;
     cout << "1 - daca vrei sa continui si sa vezi ofertele noastre, apasa tasta 1: ";
 
     char optiune;
