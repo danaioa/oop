@@ -129,7 +129,7 @@ public:
         : Nume(std::move(Nume)), Numar(std::move(Numar)), Adresa(std::move(Adresa)), optiune(optiune),
           numarMasa(numarMasa) {
         if (optiune == InRestaurant && numarMasa == -1) {
-            cerr << "Avertizare: Nu a fost specificat un număr de masă pentru opțiunea 'In Restaurant'.\n";
+            cout << "Avertizare: Nu a fost specificat un număr de masă pentru opțiunea 'In Restaurant'.\n";
         }
     }
 
@@ -163,9 +163,10 @@ public:
         }
     }
 
-    [[nodiscard]] string getNume() const { return Nume; }
-    [[nodiscard]] string getNumar() const { return Numar; }
-    [[nodiscard]] string getAdresa() const { return Adresa; }
+    [[nodiscard]] const string& getNume() const { return Nume; }
+    [[nodiscard]] const string& getNumar() const { return Numar; }
+    [[nodiscard]] const string& getAdresa() const { return Adresa; }
+
     [[nodiscard]] int getNumarMasa() const { return numarMasa; }
     [[nodiscard]] OptiuneServire getOptiune() const { return optiune; }
 };
