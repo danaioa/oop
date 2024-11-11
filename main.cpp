@@ -7,6 +7,7 @@
 #include <windows.h>
 #endif
 #include <random>
+#include <stdexcept>
 
 using namespace std;
 
@@ -17,8 +18,8 @@ class Preparate {
     double pret;
 
 public:
-   Preparate(int numarOrdine, string nume, int timpPreparare, double pret)
-    : numarOrdine(numarOrdine), nume(std::move(nume)), timpPreparare(timpPreparare), pret(pret) {}
+    Preparate(int numarOrdine, string nume, int timpPreparare, double pret)
+        : numarOrdine(numarOrdine), nume(std::move(nume)), timpPreparare(timpPreparare), pret(pret) {}
 
     Preparate(const Preparate& p) {
         this->numarOrdine = p.numarOrdine;
@@ -26,12 +27,13 @@ public:
         this->timpPreparare = p.timpPreparare;
         this->pret = p.pret;
     }
+
     Preparate& operator=(const Preparate& p) {
         if (this != &p) {
-            numarOrdine = p.numarOrdine;
-            nume = p.nume;
-            timpPreparare = p.timpPreparare;
-            pret = p.pret;
+            this->numarOrdine = p.numarOrdine;
+            this->nume = p.nume;
+            this->timpPreparare = p.timpPreparare;
+            this->pret = p.pret;
         }
         return *this;
     }
@@ -51,8 +53,7 @@ ostream& operator<<(ostream& os, const Preparate& p) {
 }
 
 class Meniu {
-private:
-    std::vector<Preparate> preparate;
+    vector<Preparate> preparate;
     int nextOrderNumber = 1;
 
 public:
@@ -62,10 +63,10 @@ public:
 
     void afisareMeniu() const {
         for (const auto& preparat : preparate)
-            std::cout << preparat << std::endl;
+            cout << preparat << endl;
     }
 
-    [[nodiscard]] Preparate getPreparat(int numarOrdine) const {
+     [[nodiscard]] Preparate getPreparat(int numarOrdine) const {
         for (const auto& preparat : preparate) {
             if (preparat.getNumarOrdine() == numarOrdine) {
                 return preparat;
@@ -77,39 +78,37 @@ public:
     void citireDinFisier(const string& numeFisier) {
         ifstream file(numeFisier);
         if (!file.is_open()) {
-            cout << "Eroare: Fișierul 'meniu.txt' nu poate fi deschis!" << endl;
+            cout<< "Eroare: Fișierul '" << numeFisier << "' nu poate fi deschis!" << endl;
             return;
         }
-        else
-        if (file.is_open()) {
-            string line;
-            while (getline(file, line)) {
-                stringstream ss(line);
-                string nume;
 
-                vector<string> words;
-                while (ss >> nume) {
-                    words.push_back(nume);
-                }
+        string line;
+        while (getline(file, line)) {
+            stringstream ss(line);
+            string nume;
 
-                if (words.size() >= 3) {
-                    double pret = stod(words.back());
-                    words.pop_back();
-                    int timpPreparare = stoi(words.back());
-                    words.pop_back();
-
-                    nume = "";
-                    for (const auto& word : words) {
-                        if (!nume.empty()) nume += " ";
-                        nume += word;
-                    }
-                    Preparate preparat(nextOrderNumber++, nume, timpPreparare, pret);
-                    adaugarePreparat(preparat);
-                } else {
-                    cout << "Linie incorecta: \"" << line << "\"" << endl;
-                }
+            vector<string> words;
+            while (ss >> nume) {
+                words.push_back(nume);
             }
-            file.close();
+
+            if (words.size() >= 3) {
+                double pret = stod(words.back());
+                words.pop_back();
+                int timpPreparare = stoi(words.back());
+                words.pop_back();
+
+                nume.clear();
+                for (const auto& word : words) {
+                    if (!nume.empty()) nume += " ";
+                    nume += word;
+                }
+                Preparate preparat(nextOrderNumber++, nume, timpPreparare, pret);
+                adaugarePreparat(preparat);
+            }
+            else {
+                cout << "Linie incorecta: \"" << line << "\"" << endl;
+            }
         }
     }
 };
@@ -130,39 +129,41 @@ public:
     Client() : optiune(LaPachet), numarMasa(-1) {}
 
     Client(string Nume, string Numar, string Adresa, OptiuneServire optiune, int numarMasa = -1)
-    : Nume(std::move(Nume)), Numar(std::move(Numar)), Adresa(std::move(Adresa)), optiune(optiune), numarMasa(numarMasa) {
+        : Nume(std::move(Nume)), Numar(std::move(Numar)), Adresa(std::move(Adresa)), optiune(optiune), numarMasa(numarMasa) {
         if (optiune == InRestaurant && numarMasa == -1) {
-            cout << "Avertizare: Nu a fost specificat un număr de masă pentru opțiunea 'In Restaurant'.\n";
+            cerr << "Avertizare: Nu a fost specificat un număr de masă pentru opțiunea 'In Restaurant'.\n";
         }
     }
-
 
     void informatii() {
-        int optiuneInt;
-        cout << "Doriti 0 pentru LaPachet sau 1 pentru InRestaurant: ";
-        cin >> optiuneInt;
-      /// optiune = static_cast<OptiuneServire>(optiuneInt);
-        switch (optiune) {
-            case LaPachet: {
-                cout << "Numele: ";
-                cin >> Nume;
-                cout << "Numar: ";
-                cin >> Numar;
-                cout << "Adresa: ";
-                cin >> Adresa;
-                break;
-            }
-            case InRestaurant: {
-                std::random_device rd;
-                std::mt19937 gen(rd());
-                std::uniform_int_distribution<> distrib(1, 10);
-                numarMasa = distrib(gen);
-
-                cout << "Numarul mesei este: " << numarMasa << endl;
-                break;
-            }
+    int optiuneInt;
+    cout << "Doriti 0 pentru LaPachet sau 1 pentru InRestaurant: ";
+    cin >> optiuneInt;
+        optiune = static_cast<OptiuneServire>(optiuneInt);
+    switch (optiune) {
+        case LaPachet: {
+            cout << "Numele: ";
+            cin >> Nume;
+            cout << "Numar: ";
+            cin >> Numar;
+            cout << "Adresa: ";
+            cin >> Adresa;
+            break;
         }
+        case InRestaurant: {
+            random_device rd;
+            mt19937 gen(rd());
+            uniform_int_distribution<> distrib(1, 10);
+            numarMasa = distrib(gen);
+
+            cout << "Numarul mesei este: " << numarMasa << endl;
+            break;
+        }
+        default:
+            cerr << "Eroare: Opțiune necunoscută.\n";
+            break;
     }
+}
 
     [[nodiscard]] string getNume() const { return Nume; }
     [[nodiscard]] string getNumar() const { return Numar; }
@@ -171,18 +172,19 @@ public:
     [[nodiscard]] OptiuneServire getOptiune() const { return optiune; }
 };
 
+
 class BonFiscal {
     Client client;
     vector<Preparate> comenzi;
-    double total;
+    double total = 0;
 
 public:
-    explicit BonFiscal(Client client) : client(std::move(client)), total(0) {}
-    void adaugaPreparat(Preparate preparat) {
-        comenzi.push_back(std::move(preparat));
+    explicit BonFiscal(Client client) : client(std::move(client)) {}
+
+    void adaugaPreparat(const Preparate& preparat) {
+        comenzi.push_back(preparat);
         total += preparat.getPret();
     }
-
 
     void afisareBon() const {
         cout << "\n--- Bon Fiscal ---\n";
@@ -200,7 +202,6 @@ public:
         cout << "\nTotal de plata: " << total << " RON\n";
     }
 };
-
 static void Culoare(int c) {
 #ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -299,3 +300,4 @@ int main() {
     AfisareMesaj();
     return 0;
 }
+
