@@ -19,16 +19,17 @@ class Preparate {
 
 public:
     Preparate(int numarOrdine, string nume, int timpPreparare, double pret)
-        : numarOrdine(numarOrdine), nume(std::move(nume)), timpPreparare(timpPreparare), pret(pret) {}
+        : numarOrdine(numarOrdine), nume(std::move(nume)), timpPreparare(timpPreparare), pret(pret) {
+    }
 
-    Preparate(const Preparate& p) {
+    Preparate(const Preparate &p) {
         this->numarOrdine = p.numarOrdine;
         this->nume = p.nume;
         this->timpPreparare = p.timpPreparare;
         this->pret = p.pret;
     }
 
-    Preparate& operator=(const Preparate& p) {
+    Preparate &operator=(const Preparate &p) {
         if (this != &p) {
             this->numarOrdine = p.numarOrdine;
             this->nume = p.nume;
@@ -44,10 +45,10 @@ public:
     [[nodiscard]] string getNume() const { return nume; }
     [[nodiscard]] double getPret() const { return pret; }
 
-    friend ostream& operator<<(ostream& os, const Preparate& p);
+    friend ostream &operator<<(ostream &os, const Preparate &p);
 };
 
-ostream& operator<<(ostream& os, const Preparate& p) {
+ostream &operator<<(ostream &os, const Preparate &p) {
     os << "Order #" << p.numarOrdine << ": " << p.nume << " " << p.timpPreparare << " min " << p.pret << " RON";
     return os;
 }
@@ -57,17 +58,17 @@ class Meniu {
     int nextOrderNumber = 1;
 
 public:
-    void adaugarePreparat(const Preparate& p) {
+    void adaugarePreparat(const Preparate &p) {
         preparate.push_back(p);
     }
 
     void afisareMeniu() const {
-        for (const auto& preparat : preparate)
+        for (const auto &preparat: preparate)
             cout << preparat << endl;
     }
 
-     [[nodiscard]] Preparate getPreparat(int numarOrdine) const {
-        for (const auto& preparat : preparate) {
+    [[nodiscard]] Preparate getPreparat(int numarOrdine) const {
+        for (const auto &preparat: preparate) {
             if (preparat.getNumarOrdine() == numarOrdine) {
                 return preparat;
             }
@@ -75,7 +76,7 @@ public:
         throw invalid_argument("Preparatul cu acest numar de ordine nu exista.");
     }
 
-    void citireDinFisier(const string& numeFisier) {
+    void citireDinFisier(const string &numeFisier) {
         ifstream file(numeFisier);
         string line;
         while (getline(file, line)) {
@@ -94,14 +95,13 @@ public:
                 words.pop_back();
 
                 nume.clear();
-                for (const auto& word : words) {
+                for (const auto &word: words) {
                     if (!nume.empty()) nume += " ";
                     nume += word;
                 }
                 Preparate preparat(nextOrderNumber++, nume, timpPreparare, pret);
                 adaugarePreparat(preparat);
-            }
-            else {
+            } else {
                 cout << "Linie incorecta: \"" << line << "\"" << endl;
             }
         }
@@ -121,44 +121,46 @@ class Client {
     int numarMasa;
 
 public:
-    Client() : optiune(LaPachet), numarMasa(-1) {}
+    Client() : optiune(LaPachet), numarMasa(-1) {
+    }
 
     Client(string Nume, string Numar, string Adresa, OptiuneServire optiune, int numarMasa = -1)
-        : Nume(std::move(Nume)), Numar(std::move(Numar)), Adresa(std::move(Adresa)), optiune(optiune), numarMasa(numarMasa) {
+        : Nume(std::move(Nume)), Numar(std::move(Numar)), Adresa(std::move(Adresa)), optiune(optiune),
+          numarMasa(numarMasa) {
         if (optiune == InRestaurant && numarMasa == -1) {
             cerr << "Avertizare: Nu a fost specificat un număr de masă pentru opțiunea 'In Restaurant'.\n";
         }
     }
 
     void informatii() {
-    int optiuneInt;
-    cout << "Doriti 0 pentru LaPachet sau 1 pentru InRestaurant: ";
-    cin >> optiuneInt;
+        int optiuneInt=-1;
+        cout << "Doriti 0 pentru LaPachet sau 1 pentru InRestaurant: ";
+        cin >> optiuneInt;
         optiune = static_cast<OptiuneServire>(optiuneInt);
-    switch (optiune) {
-        case LaPachet: {
-            cout << "Numele: ";
-            cin >> Nume;
-            cout << "Numar: ";
-            cin >> Numar;
-            cout << "Adresa: ";
-            cin >> Adresa;
-            break;
-        }
-        case InRestaurant: {
-            random_device rd;
-            mt19937 gen(rd());
-            uniform_int_distribution<> distrib(1, 10);
-            numarMasa = distrib(gen);
+        switch (optiune) {
+            case LaPachet: {
+                cout << "Numele: ";
+                cin >> Nume;
+                cout << "Numar: ";
+                cin >> Numar;
+                cout << "Adresa: ";
+                cin >> Adresa;
+                break;
+            }
+            case InRestaurant: {
+                random_device rd;
+                mt19937 gen(rd());
+                uniform_int_distribution<> distrib(1, 10);
+                numarMasa = distrib(gen);
 
-            cout << "Numarul mesei este: " << numarMasa << endl;
-            break;
+                cout << "Numarul mesei este: " << numarMasa << endl;
+                break;
+            }
+            default:
+                cerr << "Eroare: Opțiune necunoscută.\n";
+                break;
         }
-        default:
-            cerr << "Eroare: Opțiune necunoscută.\n";
-            break;
     }
-}
 
     [[nodiscard]] string getNume() const { return Nume; }
     [[nodiscard]] string getNumar() const { return Numar; }
@@ -174,9 +176,10 @@ class BonFiscal {
     double total = 0;
 
 public:
-    explicit BonFiscal(Client client) : client(std::move(client)) {}
+    explicit BonFiscal(Client client) : client(std::move(client)) {
+    }
 
-    void adaugaPreparat(const Preparate& preparat) {
+    void adaugaPreparat(const Preparate &preparat) {
         comenzi.push_back(preparat);
         total += preparat.getPret();
     }
@@ -191,21 +194,22 @@ public:
             cout << "Numar masa: " << client.getNumarMasa() << "\n";
         }
         cout << "\nComenzi:\n";
-        for (const auto& preparat : comenzi) {
+        for (const auto &preparat: comenzi) {
             cout << preparat << "\n";
         }
         cout << "\nTotal de plata: " << total << " RON\n";
     }
 };
-static void Culoare() {
+
+static void Culoare(int c) {
 #ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, 10);
+    SetConsoleTextAttribute(hConsole, c);
 #endif
 }
 
 void desenareBraz(int inaltime) {
-    Culoare();
+    Culoare(10);
     for (int i = 1; i <= inaltime; i++) {
         for (int j = 1; j <= inaltime - i; j++) {
             cout << " ";
@@ -224,17 +228,17 @@ void desenareBraz(int inaltime) {
 }
 
 void AfisareMesaj() {
-    Culoare();
+    Culoare(9);
 
     string text = "                 BINE ATI VENIT LA OCHE!\n"
-                  "                 -----------------------\n\n"
-                  "->Locatie: Predeal\n"
-                  "->Restaurantul OCHE exceleaza prin savoarea, diversitatea si calitatea produselor gatite cu pasiune \n"
-                  "->Un loc perfect pentru relaxare alaturi de cei dragi, departe de agitatia urbana\n\n\n";
+            "                 -----------------------\n\n"
+            "->Locatie: Predeal\n"
+            "->Restaurantul OCHE exceleaza prin savoarea, diversitatea si calitatea produselor gatite cu pasiune \n"
+            "->Un loc perfect pentru relaxare alaturi de cei dragi, departe de agitatia urbana\n\n\n";
 
     cout << text;
     desenareBraz(5);
-    Culoare();
+    Culoare(9);
     cout << "1 - daca vrei sa continui si sa vezi ofertele noastre, apasa tasta 1: ";
 
     char optiune;
@@ -271,7 +275,7 @@ void AfisareMesaj() {
                     try {
                         Preparate preparat = meniu.getPreparat(numarOrdine);
                         bon.adaugaPreparat(preparat);
-                    } catch (const std::exception& e) {
+                    } catch (const std::exception &e) {
                         cout << e.what() << endl;
                     }
                 }
@@ -295,4 +299,3 @@ int main() {
     AfisareMesaj();
     return 0;
 }
-
