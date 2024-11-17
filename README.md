@@ -1,4 +1,14 @@
-# Nu primesc notă pentru că nu am pus titlu și descriere
+HELLO FRESH🌱
+
+HELLO FRESH este partenerul ideal pentru cei care apreciază un stil de viață sănătos și gusturi sofisticate. Aplicația îți aduce la un click distanță o gamă variată de preparate sănătoase, băuturi revitalizante și deserturi irezistibile. În plus, poți rezerva cu ușurință o masă la restaurant, iar la sosire vei găsi totul pregătit, economisind timp și bucurându-te de o experiență bine organizată.
+
+Punem accent pe un stil de viață echilibrat, motiv pentru care HELLO FRESH îți calculează necesarul caloric zilnic, luând în considerare vârsta, greutatea, înălțimea și nivelul de activitate fizică. Pe baza acestor date, îți oferim meniuri personalizate sau planuri alimentare complete, adaptate obiectivelor tale – fie că urmărești menținerea greutății, pierderea în greutate sau creșterea masei musculare.
+
+Pentru cei pasionați de gătit, oferim un serviciu unic: Food Box, care include toate ingredientele proaspete și rețetele necesare pentru a pregăti preparate delicioase în confortul propriei case. Astfel, fiecare masă devine o celebrare a sănătății și a gustului autentic.
+
+Mai mult, dacă îți creezi un cont, vei beneficia de reduceri exclusive și de acces la activități speciale, precum inițiativele noastre dedicate protejării mediului.
+
+Cu HELLO FRESH, nu doar că îți organizezi mesele, dar contribui și la un viitor mai verde!
 
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
