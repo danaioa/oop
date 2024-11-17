@@ -255,7 +255,7 @@ enum OptiuneServire {
 
 //class ClientNou;
 
-int citesteUltimulNumar(const string& filename) {
+int citesteUltimulNumar([[maybe_unused]] const string& filename){
     ifstream file("Clienti.txt");
 
     file.seekg(0, ios::end);
@@ -356,7 +356,9 @@ public:
         file.close();
     }
 
-    static void CodClient(int& id, double& reducere, int& trecipeste) {
+
+
+    static void CodClient(int& id, double& reducere) {
         int ok = 0;
         reducere = 1;
 
@@ -394,10 +396,10 @@ public:
     }
 
 
-    [[nodiscard]] int getIdClient() const { return Id_Client; }
-    [[nodiscard]] string getNume() const { return Nume; }
-    [[nodiscard]] string getAdresa() const { return Adresa; }
-    [[nodiscard]] string getTelefon() const { return Telefon; }
+    ///[[nodiscard]] int getIdClient() const { return Id_Client; }
+    [[nodiscard]] const string& getNume() const { return Nume; }
+    ///[[nodiscard]] const string& getAdresa() const { return Adresa; }
+    ///[[nodiscard]] const string& getTelefon() const { return Telefon; }
 };
 
 class Comanda {
@@ -501,26 +503,6 @@ public:
         return total;
     }
 
-    void adaugareInPlus() {
-        cout << "Mai doriti ceva: y/n";
-        char raspuns;
-        cin >> raspuns;
-        switch (raspuns) {
-        case 'y': {
-            plasareComanda();
-            break;
-        }
-        case 'n': {
-            afisareComanda();
-            break;
-        }
-        default: {
-            std::cout << "Răspuns invalid. Te rugăm să introduci 'y' sau 'n'." << std::endl;
-            break;
-        }
-        }
-
-    }
 
 };
 
@@ -531,7 +513,6 @@ void Afisare() {
     MeniuBar bar;
     int id_client;
     double reducere = 1; // Reducere implicită
-    int trecipeste = 0;
 
     restaurant.citireDinFisier("meniu.txt");
     bar.citireDinFisier("meniuBar");
@@ -545,7 +526,7 @@ void Afisare() {
     cin >> id_client;
 
     Client client(id_client);
-    Client::CodClient(id_client, reducere, trecipeste);
+    Client::CodClient(id_client, reducere);
     client.informatii();
     cout << endl;
 
