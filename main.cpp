@@ -404,10 +404,10 @@ public:
 
 
 
-    ///[[nodiscard]] int getIdClient() const { return Id_Client; }
+    [[nodiscard]] int getIdClient() const { return Id_Client; }
     [[nodiscard]] const string& getNume() const { return Nume; }
-    ///[[nodiscard]] const string& getAdresa() const { return Adresa; }
-    ///[[nodiscard]] const string& getTelefon() const { return Telefon; }
+    [[nodiscard]] const string& getAdresa() const { return Adresa; }
+    [[nodiscard]] const string& getTelefon() const { return Telefon; }
 };
 
 class Comanda {
@@ -472,6 +472,10 @@ public:
     void afisareComanda(double reducere = 1.0) const {
         cout << "\n--- Comanda Finala ---\n";
         cout << "Client: " << client->getNume() << "\n";
+        cout<<"ID_CLIENT: "<<client->getIdClient()<<"\n";
+        cout<<"Telefon: "<<client->getTelefon()<<"\n";
+        cout<<"Adresa: "<<client->getAdresa()<<"\n";
+
         if (reducere != 1.0) {
             cout << "Reducere:" << reducere * 100 << "%" << "\n";
         }
