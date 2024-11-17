@@ -294,16 +294,15 @@ private:
     string Adresa;
     OptiuneServire Optiune;
     int NrMasa = 0;
-  /// int Id_Client;
+   int Id_Client;
 public:
 
-    //explicit Client(int id_client) : Nume(), Telefon(), Adresa(), Optiune(InRestaurant), NrMasa(0), Id_Client(id_client) {}
-    //Client(std::string nume, std::string telefon, std::string adresa, int id_client) : Nume(std::move(nume)),
-       // Telefon(std::move(telefon)), Adresa(std::move(adresa)), Optiune(LaPachet), Id_Client(id_client) {}
-
-    explicit Client(int id_client) : Nume(), Telefon(), Adresa(), Optiune(InRestaurant), NrMasa(0) {}
+    explicit Client(int id_client) : Nume(), Telefon(), Adresa(), Optiune(InRestaurant), NrMasa(0), Id_Client(id_client) {}
     Client(std::string nume, std::string telefon, std::string adresa, int id_client) : Nume(std::move(nume)),
-     Telefon(std::move(telefon)), Adresa(std::move(adresa)), Optiune(LaPachet) {}
+        Telefon(std::move(telefon)), Adresa(std::move(adresa)), Optiune(LaPachet), Id_Client(id_client) {
+        cout << "Client creat cu ID-ul: " << id_client <<endl;
+    }
+
 
 
     void informatii() {
@@ -570,4 +569,3 @@ int main() {
     //cout<<generareCod();
     return 0;
 }
-
