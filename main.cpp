@@ -361,11 +361,26 @@ public:
 
 
 
-    static void CodClient(int& id, double& reducere) {
+
+
+    static void CodClient(int& id, double& reducere, bool test_mode = false) {
         int ok = 0;
         reducere = 1;
 
         verificareCod(id, ok, reducere);
+
+        if (test_mode) {
+
+            if (ok == 0) {
+                cout << "ID_Client invalid. Generăm automat un cont nou.\n";
+                ofstream file("Clienti.txt", ios::app);
+                id = generareCod();
+                file <<endl << id << " " << '0';
+                cout << "Cont creat cu succes pentru ID_Client: " << id << "\n";
+
+            }
+            return;
+        }
 
         while (ok == 0) {
             cout << "ID_Client este incorect\n";
@@ -376,31 +391,32 @@ public:
             int optiune;
             while (true) {
                 cout << "Alege o opțiune (1/2/3): ";
-                if (cin >> optiune && (optiune == 1 || optiune == 2 || optiune == 3)) {
+                if (std::cin >> optiune && (optiune == 1 || optiune == 2 || optiune == 3)) {
                     break; // Input valid
                 } else {
                     cout << "Opțiune invalidă! Te rugăm să alegi 1, 2 sau 3.\n";
-                    cin.clear();  // Curăță starea de eroare a `cin`
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Șterge buffer-ul
+                    cin.clear();
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 }
             }
 
             if (optiune == 1) {
                 ofstream file("Clienti.txt", ios::app);
                 id = generareCod();
-                file << endl << id << " " << '0';
-                cout << "Creare cont nou pentru ID_Client: " << id << endl;
-                cout << "Contul a fost creat cu succes\n";
+                file << std::endl << id << " " << '0';
+                std::cout << "Creare cont nou pentru ID_Client: " << id << std::endl;
+                std::cout << "Contul a fost creat cu succes\n";
                 break;
             } else if (optiune == 2) {
                 return;
             } else if (optiune == 3) {
-                cout << "Introduceti ID_Client: ";
-                cin >> id;
-                verificareCod(id, ok, reducere);  // Verificăm ID-ul din nou
+                std::cout << "Introduceti ID_Client: ";
+                std::cin >> id;
+                verificareCod(id, ok, reducere);
             }
         }
     }
+
 
 
 
