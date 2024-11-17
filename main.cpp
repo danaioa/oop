@@ -37,7 +37,7 @@ public:
 
     ~Preparate() = default;
     [[nodiscard]] int getNumarOrdine() const { return numarOrdine; }
-    [[nodiscard]] string getNume() const { return nume; }
+    [[nodiscard]] const string& getNume() const { return nume; }
     [[nodiscard]] double getPret() const { return pret; }
     friend ostream& operator<<(ostream& os, const Preparate& p);
 };
@@ -114,7 +114,7 @@ public:
         : numarOrdine(numarOrdine), nume(std::move(nume)), pret(pret) {}
 
     [[nodiscard]] int getNumarOrdine() const { return numarOrdine; }
-    [[nodiscard]] string getNume() const { return nume; }
+    [[nodiscard]] const string& getNume() const { return nume; }
     [[nodiscard]] double getPret() const { return pret; }
 
     friend ostream& operator<<(ostream& os, const Bautura& b);
@@ -294,12 +294,16 @@ private:
     string Adresa;
     OptiuneServire Optiune;
     int NrMasa = 0;
-    int Id_Client;
+  /// int Id_Client;
 public:
 
-    explicit Client(int id_client) : Nume(), Telefon(), Adresa(), Optiune(InRestaurant), NrMasa(0), Id_Client(id_client) {}
+    //explicit Client(int id_client) : Nume(), Telefon(), Adresa(), Optiune(InRestaurant), NrMasa(0), Id_Client(id_client) {}
+    //Client(std::string nume, std::string telefon, std::string adresa, int id_client) : Nume(std::move(nume)),
+       // Telefon(std::move(telefon)), Adresa(std::move(adresa)), Optiune(LaPachet), Id_Client(id_client) {}
+
+    explicit Client(int id_client) : Nume(), Telefon(), Adresa(), Optiune(InRestaurant), NrMasa(0) {}
     Client(std::string nume, std::string telefon, std::string adresa, int id_client) : Nume(std::move(nume)),
-        Telefon(std::move(telefon)), Adresa(std::move(adresa)), Optiune(LaPachet), Id_Client(id_client) {}
+     Telefon(std::move(telefon)), Adresa(std::move(adresa)), Optiune(LaPachet) {}
 
 
     void informatii() {
@@ -369,31 +373,36 @@ public:
             cout << "1 - Creare cont\n";
             cout << "2 - Nu acum\n";
             cout << "3 - Mai incerca\n";
+
             int optiune;
-            cin >> optiune;
+            while (true) {
+                cout << "Alege o opțiune (1/2/3): ";
+                if (cin >> optiune && (optiune == 1 || optiune == 2 || optiune == 3)) {
+                    break; // Input valid
+                } else {
+                    cout << "Opțiune invalidă! Te rugăm să alegi 1, 2 sau 3.\n";
+                    cin.clear();  // Curăță starea de eroare a `cin`
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Șterge buffer-ul
+                }
+            }
 
             if (optiune == 1) {
                 ofstream file("Clienti.txt", ios::app);
                 id = generareCod();
                 file << endl << id << " " << '0';
                 cout << "Creare cont nou pentru ID_Client: " << id << endl;
-
                 cout << "Contul a fost creat cu succes\n";
                 break;
-            }
-            else if (optiune == 2) {
+            } else if (optiune == 2) {
                 return;
-            }
-            else if (optiune == 3) {
+            } else if (optiune == 3) {
                 cout << "Introduceti ID_Client: ";
                 cin >> id;
                 verificareCod(id, ok, reducere);  // Verificăm ID-ul din nou
             }
-            else {
-                cout << "Opțiune invalidă! Te rugăm să alegi 1 sau 2.\n";
-            }
         }
     }
+
 
 
     ///[[nodiscard]] int getIdClient() const { return Id_Client; }
