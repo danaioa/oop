@@ -204,6 +204,7 @@ public:
 };
 
 
+<<<<<<< Updated upstream
 void desenareBraz(int inaltime) {
     rlutil::setColor(rlutil::BLUE);
     for (int i = 1; i <= inaltime; i++) {
@@ -214,6 +215,54 @@ void desenareBraz(int inaltime) {
             cout << "*";
         }
         cout << endl;
+=======
+
+
+void Afisare() {
+    Meniu restaurant;
+    MeniuBar bar;
+    int id_client;
+    double reducere = 1;
+
+    restaurant.citireDinFisier("meniu.txt");
+    bar.citireDinFisier("meniuBar");
+    cout << endl;
+
+    string text = "         Bine ai venit la HELLO FRESH!\n"
+        "         ----------------------------";
+    cout << text << endl;
+
+
+
+    cout << "Introduceti ID_Client: ";
+    cin >> id_client;
+
+    Client client(id_client);
+    Client::CodClient(id_client, reducere);
+    client.informatii();
+    cout << endl;
+
+    Comanda comanda(&client, restaurant, bar);
+    comanda.plasareComanda();
+
+    cout << "Mai doriti ceva y/n:";
+    char raspuns;
+    cin >> raspuns;
+
+    switch (raspuns) {
+    case 'y': {
+        comanda.plasareComanda();
+        comanda.afisareComanda(reducere);
+        break;
+    }
+    case 'n': {
+        comanda.afisareComanda(reducere);
+        break;
+    }
+    default: {
+        cout << "Raspuns invalid! Te rugam să introduci 'y' sau 'n'." << endl;
+        break;
+>>>>>>> Stashed changes
     }
     for (int i = 1; i <= 1; i++) {
         for (int j = 1; j <= inaltime - 1; j++) {
@@ -221,6 +270,8 @@ void desenareBraz(int inaltime) {
         }
         cout << "|" << endl << endl;
     }
+
+
 }
 
 void AfisareMesaj() {
