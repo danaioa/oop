@@ -255,7 +255,7 @@ enum OptiuneServire {
 
 //class ClientNou;
 
-int citesteUltimulNumar([[maybe_unused]] const string& filename){
+int citesteUltimulNumar( const string& filename){
     ifstream file("Clienti.txt");
 
     file.seekg(0, ios::end);
@@ -341,14 +341,14 @@ public:
     static void verificareCod(int id, int& ok, double& reducere) {
         ifstream file("Clienti.txt");
         int idExistent, nrComenzi;
-        reducere = 1;
+        reducere = 0.4;
         ok = 0;
 
         while (file >> idExistent >> nrComenzi) {
             if (idExistent == id) {
                 ok = 1;
-                if (nrComenzi == 0) { // Reducere 40%
-                    reducere = 0.4;
+                if (nrComenzi != 0 && nrComenzi%5!=0) {
+                    reducere = 1;
                 }
                 else if (nrComenzi % 5 == 0) { // Reducere 10%
                     reducere = 0.2;
@@ -356,6 +356,7 @@ public:
                 break;
             }
         }
+
         file.close();
     }
 
@@ -377,13 +378,12 @@ public:
 
             int optiune;
             while (true) {
-                cout << "Alege o opțiune (1/2/3): ";
+                cout << "Alege o optiune (1/2/3): ";
                 if (cin >> optiune && (optiune == 1 || optiune == 2 || optiune == 3)) {
                     break; // Input valid
                 } else {
-                    cout << "Opțiune invalidă! Te rugăm să alegi 1, 2 sau 3.\n";
-                    cin.clear();  // Curăță starea de eroare a cin
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Șterge buffer-ul
+                    cout << "Optiune invalida! Te rugam să alegi 1, 2 sau 3.\n";
+                    cin.clear();
                 }
             }
 
@@ -399,7 +399,7 @@ public:
             } else if (optiune == 3) {
                 cout << "Introduceti ID_Client: ";
                 cin >> id;
-                verificareCod(id, ok, reducere);  // Verificăm ID-ul din nou
+                verificareCod(id, ok, reducere);
             }
         }
     }
@@ -407,7 +407,7 @@ public:
 
 
 
-    [[nodiscard]] int getIdClient() const { return Id_Client; }
+    [[nodiscard]] int &getIdClient() { return Id_Client; }
     [[nodiscard]] const string& getNume() const { return Nume; }
     [[nodiscard]] const string& getAdresa() const { return Adresa; }
     [[nodiscard]] const string& getTelefon() const { return Telefon; }
@@ -475,6 +475,7 @@ public:
     void afisareComanda(double reducere = 1.0) const {
         cout << "\n--- Comanda Finala ---\n";
         cout << "Client: " << client->getNume() << "\n";
+        client->getIdClient()=citesteUltimulNumar("Clienti.txt");
         cout<<"ID_CLIENT: "<<client->getIdClient()<<"\n";
         cout<<"Telefon: "<<client->getTelefon()<<"\n";
         cout<<"Adresa: "<<client->getAdresa()<<"\n";
@@ -502,7 +503,7 @@ public:
     }
 
 
-    [[nodiscard]] double calculareTotal(double reducere = 1.0) const {
+    [[nodiscard]] double calculareTotal(double reducere) const {
         double total = 0.0;
 
         for (const auto& [preparat, cantitate] : preparateComandate) {
@@ -512,8 +513,8 @@ public:
             total += bautura.getPret() * cantitate;
         }
 
-
-        total = total - (total * reducere);
+        if(reducere != 1.0)
+       total = total - (total * reducere);
 
         return total;
     }
@@ -527,7 +528,7 @@ void Afisare() {
     Meniu restaurant;
     MeniuBar bar;
     int id_client;
-    double reducere = 1; // Reducere implicită
+    double reducere = 1;
 
     restaurant.citireDinFisier("meniu.txt");
     bar.citireDinFisier("meniuBar");
@@ -563,7 +564,7 @@ void Afisare() {
         break;
     }
     default: {
-        cout << "Răspuns invalid! Te rugăm să introduci 'y' sau 'n'." << endl;
+        cout << "Raspuns invalid! Te rugam să introduci 'y' sau 'n'." << endl;
         break;
     }
     }
@@ -571,8 +572,6 @@ void Afisare() {
 
 
 int main() {
-
     Afisare();
-    //cout<<generareCod();
     return 0;
 }

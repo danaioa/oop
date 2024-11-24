@@ -98,5 +98,7 @@ endif()
 
 include(cmake/CopyHelper.cmake)
 copy_files(FILES meniu.txt)
+copy_files(FILES meniuBar)
+copy_files(FILES Clienti.txt)
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds)
 # copy_files(DIRECTORY images sounds)
