@@ -255,7 +255,7 @@ enum OptiuneServire {
 
 //class ClientNou;
 
-int citesteUltimulNumar( const string& filename){
+int citesteUltimulNumar( [[maybe_unused]]  const string& filename){
     ifstream file("Clienti.txt");
 
     file.seekg(0, ios::end);
