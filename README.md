@@ -6,7 +6,10 @@ Punem accent pe un stil de viață echilibrat, motiv pentru care HELLO FRESH î�
 
 Pentru cei pasionați de gătit, oferim un serviciu unic: Food Box, care include toate ingredientele proaspete și rețetele necesare pentru a pregăti preparate delicioase în confortul propriei case. Astfel, fiecare masă devine o celebrare a sănătății și a gustului autentic.
 
+In plus, poti urmari unde se află livratorul și cât mai durează până ajunge la tine. Iar cât timp aștepți, te poți distra cu un mini-joc creat special pentru tine!
+
 Mai mult, dacă îți creezi un cont, vei beneficia de reduceri exclusive și de acces la activități speciale, precum inițiativele noastre dedicate protejării mediului.
+
 
 Cu HELLO FRESH, nu doar că îți organizezi mesele, dar contribui și la un viitor mai verde!
 
